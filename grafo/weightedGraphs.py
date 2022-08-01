@@ -17,10 +17,6 @@
     def print_adj_matrix(self):
         print(self.m_adj_matrix, "\n") """
 
-from email.charset import SHORTEST
-from os import stat
-
-
 class Graph_AdjList:
     def __init__(self, num_of_nodes, directed=True):
         self.m_num_of_nodes = num_of_nodes
@@ -138,7 +134,7 @@ graph2.addEdge(2, 2, 2)
 graph2.printAdjLIst()
 print("")
 print("Path between 2 and 3")
-print("")
+print("As g")
 p = graph2.findAllPaths(2, 3)
 print("All paths: ", p)
 print("")
