@@ -34,26 +34,30 @@ class Graph:
         for key in self.adj_list.keys():
             print(f"node {key[0]}: {[(n[0][0], n[1]) for n in self.adj_list[key]]}")
 
-    def visitAllNeighboursLimited(self, node, limit, path=[], paths=[], cost=0):
+    def visitAllNeighboursLimited(self, node, limit, path=[], paths=[], cost=0, start=None):
 
+        if start is None:
+            start = node
 
         path.append(node[0])
 
+        pair = (path, cost)
+
+        if pair not in paths:
+            paths.append(pair)
+            return self.visitAllNeighboursLimited(node=start, start=start, limit=limit, path=[], paths=paths)
 
         for neighbour in self.adj_list[node]:
+
             if neighbour[0][0] not in path:
 
-                if (cost + neighbour[1]) >= limit:
-                    pair = (path, cost)
+                if cost + neighbour[1] >= limit:
                     paths.append(pair)
-                    return
+                    return self.visitAllNeighboursLimited(node=start, start=start, limit=limit, path=[], paths=paths)
 
-                self.visitAllNeighboursLimited(node=neighbour[0], limit=limit, path=path, paths=paths, cost=(cost + neighbour[1]))
+                return self.visitAllNeighboursLimited(node=neighbour[0], start=start, limit=limit, path=path, paths=paths, cost=(cost + neighbour[1]))
 
         return paths
-
-
-
 
 def readCSV(f, graph):
 
@@ -68,7 +72,7 @@ def readCSV(f, graph):
 
     for i, row in data.iterrows(): #itera pelas linhas
 
-        if count > 1000:
+        if count > 5:
             break;
 
         try:
@@ -104,6 +108,8 @@ def readCSV(f, graph):
         # p2[2] = ncord[1]
 
 
+        print(p1, p2, row['COMPRIMENTO'])
+
         graph.addEdge(p1, p2, float(row['COMPRIMENTO'].replace(',', '.')))
         count += 1;
 
@@ -122,6 +128,8 @@ print("")
 print("")
 
 
-x = graph.visitAllNeighboursLimited(node=(1140826, -30.143365391203098, -50.89757942900422), limit=350)
+x = graph.visitAllNeighboursLimited(node=(139128, -30.131005246831297, -50.89506682860131), limit=999)
 
-print(x)
+for i in x:
+    print("")
+    print(i )
