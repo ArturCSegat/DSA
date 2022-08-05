@@ -34,30 +34,59 @@ class Graph:
         for key in self.adj_list.keys():
             print(f"node {key[0]}: {[(n[0][0], n[1]) for n in self.adj_list[key]]}")
 
-    def visitAllNeighboursLimited(self, node, limit, path=[], paths=[], cost=0, start=None):
+    def findAllPaths(self, start, end, path=[], paths=[], cost=0):
+        path = path + [start[0]]
 
-        if start is None:
-            start = node
 
-        path.append(node[0])
+        if start not in self.adj_list.keys():
+            return None
 
-        pair = (path, cost)
-
-        if pair not in paths:
+        if start == end:
+            pair = [path, cost]
             paths.append(pair)
-            return self.visitAllNeighboursLimited(node=start, start=start, limit=limit, path=[], paths=paths)
 
-        for neighbour in self.adj_list[node]:
-
-            if neighbour[0][0] not in path:
-
-                if cost + neighbour[1] >= limit:
-                    paths.append(pair)
-                    return self.visitAllNeighboursLimited(node=start, start=start, limit=limit, path=[], paths=paths)
-
-                return self.visitAllNeighboursLimited(node=neighbour[0], start=start, limit=limit, path=path, paths=paths, cost=(cost + neighbour[1]))
+        for node in self.adj_list[start]:
+            if node[0][0].name not in path:
+                self.findAllPaths(start=node[0], end=end, path=path, paths=paths, cost=(cost + node[1]))
 
         return paths
+
+    def findAllRealPaths(self, start, end, limit, path=[], paths=[], cost=0):
+        path = path + [start[0]]
+
+        if start not in self.adj_list.keys():
+            return None
+
+        if cost > limit:
+            return None
+
+
+        if start == end:
+            pair = [path, cost]
+            paths.append(pair)
+
+        for node in self.adj_list[start]:
+            if node[0][0] not in path:
+                self.findAllRealPaths(start=node[0], end=end, limit=limit, path=path, paths=paths, cost=(cost + node[1]))
+
+        return paths
+
+
+    def visitAllNeighboursLimited(self, start, limit): 
+
+        paths = []
+
+        for node in self.adj_list.keys():
+
+            paths_node = self.findAllRealPaths(start, node, limit)
+
+            for path in paths_node:
+                if path not in paths:
+                    paths.append(path)
+
+        return paths
+
+
 
 def readCSV(f, graph):
 
@@ -128,7 +157,7 @@ print("")
 print("")
 
 
-x = graph.visitAllNeighboursLimited(node=(139128, -30.131005246831297, -50.89506682860131), limit=999)
+x = graph.visitAllNeighboursLimited((139128, -30.131005246831297, -50.89506682860131), 999)
 
 for i in x:
     print("")
