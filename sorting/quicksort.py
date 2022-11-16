@@ -22,6 +22,8 @@ def quickSort(arr, low, high):
         quickSort(arr, pi+1, high)
         quickSort(arr, low, pi-1)
     
+    return arr
+    
 
 
 data = [1,4,2,5,3,2,4,6,7,55,32,]
@@ -30,7 +32,7 @@ print(data)
 
 size = len(data)
 
-quickSort(data, 0, size - 1)
+data = quickSort(data, 0, size - 1)
 
 print('Sorted Array in Ascending Order:')
 print(data)
